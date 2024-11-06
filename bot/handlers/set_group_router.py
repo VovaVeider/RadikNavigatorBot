@@ -1,11 +1,9 @@
 from aiogram import Router, types
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from ..bin.db import db
 from bot.keyboards import kb_start_main_menu, kb_cancel
 from bot.utils.states.set_group_state import SetGroupState
-from ..utils.postgres.repository import group_repo as gr
-from ..utils.postgres.repository import user_repo as ur
+from ..repository import group_repo as gr, user_repo as ur
 
 set_group_router = Router()
 

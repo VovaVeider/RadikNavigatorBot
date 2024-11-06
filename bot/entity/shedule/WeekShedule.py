@@ -2,9 +2,9 @@
 from datetime import time
 from typing import Dict
 
-from bot.parser.enum.DayOfWeek import DayOfWeek
-from bot.parser.shedule.DayShedule import DaySchedule
-from bot.parser.shedule.TimeInterval import TimeInterval
+from bot.entity.enum.DayOfWeek import DayOfWeek
+from bot.entity.shedule.DayShedule import DaySchedule
+from bot.entity.shedule.TimeInterval import TimeInterval
 
 
 # Класс WeekSchedule для работы с расписанием на всю неделю

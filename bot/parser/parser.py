@@ -2,7 +2,7 @@
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.workbook.workbook import Workbook
-from bot.parser.shedule.UniversityShedule import  UniversitySchedule
+from bot.entity.shedule.UniversityShedule import  UniversitySchedule
 
 
 

@@ -6,7 +6,7 @@ from ..keyboards import kb_start_main_menu, ikb_start_add_group
 
 from aiogram.filters.command import Command
 
-from ..utils.postgres.repository import user_repo as ur
+from ..repository import user_repo as ur
 
 start_router = Router()
 

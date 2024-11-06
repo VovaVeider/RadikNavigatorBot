@@ -1,13 +1,12 @@
 from datetime import time
-from typing import Dict
 
-from bot.parser.enum.DayOfWeek import DayOfWeek
-from bot.parser.enum.WeekType import WeekdayType
-from bot.parser.shedule.GroupShedule import GroupSchedule
+from bot.entity.enum.DayOfWeek import DayOfWeek
+from bot.entity.enum.WeekType import WeekdayType
+from bot.entity.shedule.GroupShedule import GroupSchedule
 
 from typing import Dict, Iterator
 
-from bot.parser.shedule.TimeInterval import TimeInterval
+from bot.entity.shedule.TimeInterval import TimeInterval
 
 
 class UniversitySchedule:

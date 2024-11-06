@@ -1,5 +1,5 @@
 # Класс DaySchedule для работы с расписанием
-from bot.parser.shedule.TimeInterval import TimeInterval
+from bot.entity.shedule.TimeInterval import TimeInterval
 
 
 # Класс DaySchedule для работы с расписанием одного дня

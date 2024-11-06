@@ -1,6 +1,6 @@
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
-from ..utils.postgres.repository import user_repo as ur
+from ..repository import user_repo as ur
 from bot.keyboards import kb_start_main_menu
 
 cancel_router = Router()

@@ -1,10 +1,8 @@
-from typing import Dict
-
-from bot.parser.enum.DayOfWeek import DayOfWeek
-from bot.parser.enum.WeekType import WeekdayType
-from bot.parser.shedule import WeekShedule
-from bot.parser.shedule.TimeInterval import TimeInterval
-from bot.parser.shedule.WeekShedule import WeekSchedule
+from bot.entity.enum.DayOfWeek import DayOfWeek
+from bot.entity.enum.WeekType import WeekdayType
+from bot.entity.shedule import WeekShedule
+from bot.entity.shedule.TimeInterval import TimeInterval
+from bot.entity.shedule.WeekShedule import WeekSchedule
 
 
 class GroupSchedule:
@@ -20,7 +18,7 @@ class GroupSchedule:
         """
         self.schedule[weekday_type].add_lesson(day, time_interval, description)
 
-    def set_week_shedule(self, weekday_type: WeekdayType, week_shedule: WeekShedule ):
+    def set_week_shedule(self, weekday_type: WeekdayType, week_shedule: WeekShedule):
         """
         Добавление занятия для определенной недели (четная или нечетная).
         """

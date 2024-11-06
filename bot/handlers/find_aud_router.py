@@ -4,8 +4,7 @@ from aiogram.fsm.context import FSMContext
 
 from bot.keyboards import kb_start_main_menu
 from bot.utils.states.find_aud_state import FindAudState
-from ..utils.postgres.repository import user_repo as ur
-
+from ..repository import user_repo as ur
 
 find_aud_router = Router()
 

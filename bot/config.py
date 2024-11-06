@@ -4,7 +4,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 
-from bot.utils.postgres.repository.database import Database
+from bot.repository.database import Database
 
 load_dotenv()
 

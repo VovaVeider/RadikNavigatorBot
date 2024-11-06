@@ -1,7 +1,6 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.bin.db import db
-from bot.utils.postgres.entity.User import User
+from bot.entity.User import User
 
 
 def kb_start_main_menu(user: User = None):

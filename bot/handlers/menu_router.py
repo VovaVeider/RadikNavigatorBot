@@ -3,11 +3,9 @@ import os
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from bot.bin.db import db
 from bot.keyboards import kb_cancel, ikb_start_add_group, ikb_groups_configure, kb_start_main_menu
 from bot.utils.states.find_aud_state import FindAudState
-from ..utils.postgres.repository import user_repo as ur
-from ..utils.postgres.repository import group_repo as gr
+from ..repository import group_repo as gr, user_repo as ur
 from ..utils.states.upload_file_state import UploadFileState
 
 menu_router = Router()

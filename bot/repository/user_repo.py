@@ -1,7 +1,7 @@
 from typing import Optional
 
 from bot.config import database
-from bot.utils.postgres.entity.User import User
+from bot.entity.User import User
 
 
 async def add_user(user_id: int, group_id: int = None, role: str = "user"):
