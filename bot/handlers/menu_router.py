@@ -68,9 +68,9 @@ async def upload_file_parser_handler(message: types.Message, state: FSMContext):
 
     if document.mime_type == "text/plain":
         file_info = await message.bot.get_file(document.file_id)
-
+        print(file_info)
         # Скачиваем файл
-        file_path = "../bin/schedule.txt"
+        file_path = "bot/bin/schedule.txt"
         await message.bot.download_file(file_info.file_path, file_path)
         await message.answer(f"✅ Файл успешно загружен и сохранен по пути {file_path}.")
 
