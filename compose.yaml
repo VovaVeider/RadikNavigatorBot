@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: on-failure
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_ROOT_PASSWORD: test
+    ports:
+      - "5432:5432"
