@@ -18,6 +18,7 @@ def kb_start_main_menu(user: User = None):
         kb_menu.button(text="👥 Группы")
 
     kb_menu.button(text="⚙️ Настройки")
+    kb_menu.adjust(2)
     return kb_menu.as_markup(resize_keyboard=True)
 
 
