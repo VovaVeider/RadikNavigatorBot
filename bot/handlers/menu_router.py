@@ -21,8 +21,18 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
 
 @menu_router.message(F.text == "⚙️ Настройки")
 async def find_aud_handler(message: types.Message, state: FSMContext):
-    profile_text = "👤 Профиль студента\n\n" \
-                   "В разработке -> 🛠"
+    user = await ur.get_user(message.from_user.id)
+
+    user_id = user.user_id
+    group = await gr.get_group_by_id(user.group_id)
+    group_name = "Отсутствует" if group is None else group["name"]
+    role = "Администратор" if user.role == "admin" else "Пользователь"
+
+
+    profile_text = f"<blockquote>👤 Профиль</blockquote>\n\n" \
+                   f"<b>UID:</b> {user_id}\n" \
+                   f"<b>Группа:</b> {group_name}\n" \
+                   f"<b>Уровень доступа:</b> {role}"
 
 
 

@@ -4,7 +4,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 def ikb_start_add_group():
     ikb_start_add_group = InlineKeyboardBuilder()
     ikb_start_add_group.button(text="➕ Установить группу", callback_data="add_group")
-
+    ikb_start_add_group.button(text="📋 Список всех аудиторий", callback_data="list_aud")
+    ikb_start_add_group.adjust(1)
 
     return ikb_start_add_group.as_markup()
 
