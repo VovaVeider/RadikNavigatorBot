@@ -5,11 +5,16 @@ from aiogram.fsm.context import FSMContext
 
 from bot.keyboards import kb_cancel, ikb_start_add_group, ikb_groups_configure, kb_start_main_menu
 from bot.utils.states.find_aud_state import FindAudState
+from ..entity.enum.DayOfWeek import DayOfWeek
+from ..entity.enum.WeekType import WeekType
+from ..entity.shedule.UniversityShedule import UniversitySchedule
+from ..parser.parser import Parser
 from ..repository import group_repo as gr, user_repo as ur
+from ..utils.others.shedule import shedule
 from ..utils.states.upload_file_state import UploadFileState
+from datetime import datetime
 
 menu_router = Router()
-
 
 
 @menu_router.message(F.text == "🔎 Найти аудиторию")
@@ -28,13 +33,10 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
     group_name = "Отсутствует" if group is None else group["name"]
     role = "Администратор" if user.role == "admin" else "Пользователь"
 
-
     profile_text = f"<blockquote>👤 Профиль</blockquote>\n\n" \
                    f"<b>UID:</b> {user_id}\n" \
                    f"<b>Группа:</b> {group_name}\n" \
                    f"<b>Уровень доступа:</b> {role}"
-
-
 
     await message.answer(profile_text, reply_markup=ikb_start_add_group())
 
@@ -44,28 +46,20 @@ async def schedule_today_handler(message: types.Message, state: FSMContext):
     schedule_message = ""
     user = await ur.get_user(message.from_user.id)
     if (user is not None) and (user.group_id is not None):
-        schedule_message += \
-        """
-<blockquote>📆 Расписание на сегодня </blockquote>
-
-\t1. <b><i>пр.Правовое регулирование инженерной деятельности
-проф.Гришко А.Я.   465 C</i></b>
-⏰ 08.10 - 09.45\n
-\t2. <b><i> л.Физическая культура и спорт
-   Спортзал C </i></b>
-⏰ 09.55 - 11.30   
-        """
-            # "1. Лекция по предмету ТИИ, преподаватель Орешков В.И., \n" \
-
-                           # "\t🚪 Аудитория: 128\n" \
-                           # "\t⏰ Время: 13:35 – 15:10\n\n" \
-                           # "2. Лабораторная по предмету ТИИ, преподаватель Орешков В.И.\n" \
-                           # "\t🚪 Аудитория: 128\n" \
-                           # "\t⏰ Время: 15:20 – 16:55"
+        group = (await gr.get_group_by_id(user.group_id))["name"]
+        print(shedule.get_all_groups())
+        #TODO:вОЕНКА
+        if group in shedule.get_all_groups():
+            day = DayOfWeek.get_current_day()
+            week_type = WeekType.get_week_type(datetime(2024, 9, 2), datetime.now())
+            schedule_message += str(shedule.get_group_day_schedule(group, day, week_type))
+        else:
+            schedule_message += "⚠️ Расписание для вашей группы еще не добавлено. Обратитесь к админу."
     else:
         schedule_message += "⚠️ Необходимо установить группу для просмотра расписания"
 
     await message.answer(schedule_message)
+
 
 
 @menu_router.message(F.document)
@@ -76,33 +70,34 @@ async def upload_file_parser_handler(message: types.Message, state: FSMContext):
     user = await ur.get_user(message.from_user.id)
     document = message.document
 
-    if document.mime_type == "text/plain":
-        file_info = await message.bot.get_file(document.file_id)
-        print(file_info)
-        # Скачиваем файл
-        file_path = "bot/bin/schedule.txt"
-        await message.bot.download_file(file_info.file_path, file_path)
-        await message.answer(f"✅ Файл успешно загружен и сохранен по пути {file_path}.")
 
-        # parse_message = Парсинг(file_path, ......)
-        # функцию с парсером создай в utils -> other или в bin, где удобно будет.
+    file_info = await message.bot.get_file(document.file_id)
+    print(file_info)
+    # Скачиваем файл
+    file_path = "bot/bin/schedule.xlsx"
+    await message.bot.download_file(file_info.file_path, file_path)
+    await message.answer(f"✅ Файл успешно загружен и сохранен по пути {file_path}.")
+    parse_message = True
+    try:
+        parser = Parser()
+        grp_shedule: UniversitySchedule = parser.parse_file(file_path)
+        shedule.merge_schedules(grp_shedule)
+    except Exception as e:
+        print(e)
+        parse_message = False
 
-        # parse_message = True if parsing finished without errors
-        # parse_message = False if parsing finished with some errors
-        parse_message = True
-
-        if parse_message:
-            await message.answer("✅ Расписание успешно обновлено.", reply_markup=kb_start_main_menu(user))
-            try:
-                os.remove(file_path)  # Удаляем файл
-            except Exception as e:
-                await message.reply(f"Ошибка при удалении файла: {e}")
-            return await state.clear()
-        else:
-            await state.clear()
-            return await message.answer("⚠️ Произошла ошибка при обновлении расписания.", reply_markup=kb_start_main_menu(user))
+    if parse_message:
+        await message.answer("✅ Расписание успешно обновлено.", reply_markup=kb_start_main_menu(user))
+        try:
+            os.remove(file_path)  # Удаляем файл
+        except Exception as e:
+            await message.reply(f"Ошибка при удалении файла: {e}")
+        return await state.clear()
     else:
-        await message.reply("⚠️ Это не текстовый документ. Отправьте файл с расширением .txt.")
+        await state.clear()
+        return await message.answer("⚠️ Произошла ошибка при обновлении расписания.", reply_markup=kb_start_main_menu(user))
+
+
 
 @menu_router.message(F.text == "📂 Загрузка файла")
 async def upload_file(message: types.Message, state: FSMContext):
@@ -111,7 +106,6 @@ async def upload_file(message: types.Message, state: FSMContext):
         return
     await message.answer("📂 Отправьте текстовый документ (.txt).", reply_markup=kb_cancel())
     await state.set_state(UploadFileState.upload_file)
-
 
 
 @menu_router.message(F.text == "👥 Группы")
@@ -136,5 +130,3 @@ async def upload_file(message: types.Message):
         return await message.answer("В базе данных не нашлось ни одной группы.")
 
     return await message.answer(groups_message, parse_mode='HTML', reply_markup=ikb_groups_configure())
-
-

@@ -94,10 +94,11 @@ class Parser:
                 subject = subject = subject_cell.value
                 if isinstance(subject_cell, MergedCell):  # Военка чек
                     subject = prev_subject
-                if subject is None:
+                if subject is None or len(subject.strip()) < 2: #Что предмет есть
                     continue
                 # print(subject)
                 us.get_group_day_schedule(group, day, week_type).add_lesson(time, subject)
+                col_prev_subject[group] = subject
 
         return us
 

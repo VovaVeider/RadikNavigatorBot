@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from enum import Enum
 
 
@@ -57,3 +58,9 @@ class DayOfWeek(Enum):
             return day  # Возвращаем название дня недели
         except ValueError as e:
             return str(e)  # Возвращаем ошибку, если день не найден
+    @classmethod
+    def get_current_day(cls):
+        # Получаем номер дня недели (0 - понедельник, 6 - воскресенье)
+        current_day_number = datetime.now().weekday()+1
+        # Возвращаем соответствующий элемент перечисления
+        return cls(current_day_number)
