@@ -33,16 +33,12 @@ class WeekSchedule:
         """
         self.week_schedule[day] = day_schedule
 
-    def get_day_schedule(self, day: DayOfWeek) -> str:
+    def get_day_schedule(self, day: DayOfWeek) -> DaySchedule:
         """
         Получение расписания для конкретного дня недели.
         Возвращает строку с расписанием, если есть занятия, или сообщение, если занятий нет.
         """
-        day_schedule = self.week_schedule[day]
-        if day_schedule.has_lessons():
-            return f"{day.name}:\n{str(day_schedule)}"
-        else:
-            return f"{day.name}:\nNo lessons today."
+        return self.week_schedule[day]
 
     def __str__(self):
         """
