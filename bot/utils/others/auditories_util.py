@@ -24,10 +24,10 @@ def find_route(start_room, end_room):
         "right": "правом"
     }
     current_floor = start["floor"]
-    current_wing = name_wings[start["wing"]]
-
+    current_wing = start["wing"]
+    current_russion_wing = name_wings[start["wing"]]
     # Добавляем начальную позицию
-    route.append(f"Вы находитесь на {current_floor} этаже в {current_wing} крыле.\n")
+    route.append(f"Вы находитесь на {current_floor} этаже в {current_russion_wing} крыле.\n")
 
     # Переход между этажами
     if current_floor != end["floor"]:
@@ -36,7 +36,7 @@ def find_route(start_room, end_room):
         else:
             route.append(f"☝️ Поднимитесь на {end['floor']} этаж")
         current_floor = end["floor"]
-        route.append(f"Теперь вы находитесь на {current_floor} этаже в {current_wing} крыле.")
+        route.append(f"Теперь вы находитесь на {current_floor} этаже в {current_russion_wing} крыле.")
 
     # Переход между крыльями
     if current_wing != end["wing"]:
@@ -52,8 +52,8 @@ def find_route(start_room, end_room):
             route.append("Перейдите из левого крыла в центр")
         elif current_wing == "left" and end["wing"] == "right":
             route.append("Перейдите через центр в правое крыло")
-        current_wing = name_wings[end["wing"]]
-        route.append(f"Теперь вы находитесь на {current_floor} этаже в {current_wing} крыле.")
+        # current_wing = name_wings[end["wing"]]
+        route.append(f"Теперь вы находитесь на {current_floor} этаже в {current_russion_wing} крыле.")
     route.append(f"\n🔎 Найдите аудиторию {end_room}.")
 
     return route

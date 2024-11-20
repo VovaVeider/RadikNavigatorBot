@@ -55,7 +55,11 @@ class Parser:
                         digit_count += 1
                         # Если цифр стало две, можно прервать цикл
                         if digit_count >= 2:
-                            column_groups[value] = cell.column
+                            group = cell.value.strip().lower()
+                            sm_ind = group.lower().find('см')
+                            if sm_ind != -1:
+                                group = group[:sm_ind]
+                            column_groups[group] = cell.column
                             break  # Прерываем проверку после нахождения двух цифр
         # print(column_groups)
         for group in column_groups:
@@ -64,6 +68,7 @@ class Parser:
         time, day = None, None
         col_prev_subject = {group: None for group in column_groups}
         # Парсим расписания
+        prev_merged = False
         for row in range(left_up_row + 1, ws.max_row + 1):
             # Определяем тип недели и проверяем  конец таблицы расписания
             week_type_str = ws.cell(row, WEEK_TYPE_COLUMN).value
@@ -79,6 +84,7 @@ class Parser:
 
             # Определим день недели
             if ws.cell(row, DAY_COLUMN).value is not None:
+                col_prev_subject = {group: None for group in column_groups}
                 day = DayOfWeek.get_day_from_string(ws.cell(row, DAY_COLUMN).value)
                 # print(day, 'колонка ', DAY_COLUMN, 'строка ', row)
 
@@ -92,14 +98,20 @@ class Parser:
                 prev_subject = col_prev_subject[group]
                 subject_cell = ws.cell(row, column)
                 subject = subject = subject_cell.value
-                if isinstance(subject_cell, MergedCell):  # Военка чек
-                    subject = prev_subject
-                if subject is None or len(subject.strip()) < 2: #Что предмет есть
+                if isinstance(subject_cell, MergedCell):
+                    print(subject_cell.value)
+                    if not prev_merged:
+                        prev_subject = None
+                    else:
+                        subject = prev_subject
+                    prev_merged = True
+
+                if subject is None or len(subject.strip()) < 2:  # Что предмет есть
                     continue
                 # print(subject)
                 us.get_group_day_schedule(group, day, week_type).add_lesson(time, subject)
                 col_prev_subject[group] = subject
-
+        print(us)
         return us
 
 

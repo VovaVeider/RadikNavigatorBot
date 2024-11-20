@@ -20,7 +20,6 @@ menu_router = Router()
 @menu_router.message(F.text == "🔎 Найти аудиторию")
 async def find_aud_handler(message: types.Message, state: FSMContext):
     await state.set_state(FindAudState.find_aud)
-
     await message.answer("Введи номер аудитории которую хочешь найти ( например: 155 )", reply_markup=kb_cancel())
 
 
@@ -41,18 +40,19 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
     await message.answer(profile_text, reply_markup=ikb_start_add_group())
 
 
-@menu_router.message(F.text == "➕ Расписание на сегодня")
+@menu_router.message(F.text == "🕒 Расписание на сегодня")
 async def schedule_today_handler(message: types.Message, state: FSMContext):
     schedule_message = ""
     user = await ur.get_user(message.from_user.id)
     if (user is not None) and (user.group_id is not None):
         group = (await gr.get_group_by_id(user.group_id))["name"]
         print(shedule.get_all_groups())
-        #TODO:вОЕНКА
+        # TODO:вОЕНКА
         if group in shedule.get_all_groups():
             day = DayOfWeek.get_current_day()
             week_type = WeekType.get_week_type(datetime(2024, 9, 2), datetime.now())
-            schedule_message += str(shedule.get_group_day_schedule(group, day, week_type))
+            schedule_message += "<blockquote>📆 Расписание на сегодня </blockquote> " \
+                                + "\n\n" + str(shedule.get_group_day_schedule(group, day, week_type))
         else:
             schedule_message += "⚠️ Расписание для вашей группы еще не добавлено. Обратитесь к админу."
     else:
@@ -60,6 +60,28 @@ async def schedule_today_handler(message: types.Message, state: FSMContext):
 
     await message.answer(schedule_message)
 
+
+@menu_router.message(F.text == "📆 Расписание на неделю")
+async def schedule_today_handler(message: types.Message, state: FSMContext):
+    schedule_message = ""
+    print("aaaaaaaaaaaaaaaaaaa")
+    user = await ur.get_user(message.from_user.id)
+    if (user is not None) and (user.group_id is not None):
+        group = (await gr.get_group_by_id(user.group_id))["name"]
+        print(shedule.get_all_groups())
+        if group in shedule.get_all_groups():
+            day = DayOfWeek.get_current_day()
+            week_type = WeekType.get_week_type(datetime(2024, 9, 2), datetime.now())
+            for day in DayOfWeek:
+                if day.value >= DayOfWeek.get_current_day().value:
+                    schedule_string: str = str(shedule.get_group_day_schedule(group, day, week_type)).lstrip('\n')
+                    print(schedule_string)
+                    await message.answer(f"<blockquote>🗓 {day} </blockquote>"
+                                         f" \n {schedule_string} \n\n")
+        else:
+            await message.answer("⚠️ Расписание для вашей группы еще не добавлено. Обратитесь к админу.")
+    else:
+        await message.answer("⚠️ Необходимо установить группу для просмотра расписания")
 
 
 @menu_router.message(F.document)
@@ -69,7 +91,6 @@ async def upload_file_parser_handler(message: types.Message, state: FSMContext):
         return
     user = await ur.get_user(message.from_user.id)
     document = message.document
-
 
     file_info = await message.bot.get_file(document.file_id)
     print(file_info)
@@ -96,7 +117,6 @@ async def upload_file_parser_handler(message: types.Message, state: FSMContext):
     else:
         await state.clear()
         return await message.answer("⚠️ Произошла ошибка при обновлении расписания.", reply_markup=kb_start_main_menu(user))
-
 
 
 @menu_router.message(F.text == "📂 Загрузка файла")

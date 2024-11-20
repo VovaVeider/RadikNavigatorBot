@@ -10,7 +10,8 @@ def kb_start_main_menu(user: User = None):
 
 
     if (user is not None) and (user.group_id is not None):
-        kb_menu.button(text="➕ Расписание на сегодня")
+        kb_menu.button(text="🕒 Расписание на сегодня")
+        kb_menu.button(text="📆 Расписание на неделю")
 
     if (user is not None) and (user.role == "admin"):
         kb_menu.button(text="📂 Загрузка файла")
