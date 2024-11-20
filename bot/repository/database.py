@@ -30,8 +30,8 @@ class Database:
         async with self._pool.acquire() as connection:
             return await connection.execute(query, *args)
 
-    async def execute_many(self, query: str, args: List[List[Any]]):
-        """Выполняет несколько запросов с разными параметрами"""
-        async with self._pool.acquire() as connection:
-            async with connection.transaction():
-                await connection.executemany(query, args)
+    async def executemany(self, query: str, args_list: list):
+        async with self._pool.acquire() as conn:
+            return await conn.executemany(query, args_list)
+
+

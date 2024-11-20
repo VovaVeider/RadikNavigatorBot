@@ -32,3 +32,20 @@ async def update_group(group_id: int, new_name: str):
 async def delete_group(group_id: int):
     query = "DELETE FROM groups WHERE id = $1"
     await database.execute(query, group_id)
+
+async def add_groups_if_not_exists(groups: List[str]) -> None:
+    """
+    Добавляет группы в таблицу, если таких групп еще нет.
+    Сначала извлекает все существующие группы, чтобы избежать N+1 запросов.
+    """
+    # Извлекаем все группы из базы
+    existing_groups = await database.fetch("SELECT name FROM groups WHERE name = ANY($1)", groups)
+    existing_group_names = {group["name"] for group in existing_groups}
+
+    # Фильтруем только те группы, которых нет в базе
+    new_groups = [group for group in groups if group not in existing_group_names]
+
+    if new_groups:
+        # Вставляем новые группы
+        query = "INSERT INTO groups (name) VALUES ($1)"
+        await database.executemany(query, [(group,) for group in new_groups])

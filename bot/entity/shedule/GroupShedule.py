@@ -18,11 +18,11 @@ class GroupSchedule:
         """
         self.schedule[weekday_type].add_lesson(day, time_interval, description)
 
-    def set_week_shedule(self, weekday_type: WeekType, week_shedule: WeekShedule):
+    def set_week_schedule(self, weekday_type: WeekType, week_schedule: WeekShedule):
         """
         Добавление занятия для определенной недели (четная или нечетная).
         """
-        self.schedule[weekday_type] = week_shedule
+        self.schedule[weekday_type] = week_schedule
 
     def get_day_schedule(self, day: DayOfWeek, weekday_type: WeekType) -> DayShedule:
         """
