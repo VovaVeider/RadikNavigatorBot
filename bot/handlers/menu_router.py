@@ -17,10 +17,12 @@ from datetime import datetime
 menu_router = Router()
 
 
+
 @menu_router.message(F.text == "🔎 Найти аудиторию")
 async def find_aud_handler(message: types.Message, state: FSMContext):
     await state.set_state(FindAudState.find_aud)
-    await message.answer("Введи номер аудитории которую хочешь найти ( например: 155 )", reply_markup=kb_cancel())
+
+    await message.answer("🧭 Введи номер аудитории которую хочешь найти", reply_markup=kb_cancel())
 
 
 @menu_router.message(F.text == "⚙️ Настройки")
@@ -32,10 +34,13 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
     group_name = "Отсутствует" if group is None else group["name"]
     role = "Администратор" if user.role == "admin" else "Пользователь"
 
+
     profile_text = f"<blockquote>👤 Профиль</blockquote>\n\n" \
                    f"<b>UID:</b> {user_id}\n" \
                    f"<b>Группа:</b> {group_name}\n" \
                    f"<b>Уровень доступа:</b> {role}"
+
+
 
     await message.answer(profile_text, reply_markup=ikb_start_add_group())
 
@@ -128,6 +133,7 @@ async def upload_file(message: types.Message, state: FSMContext):
     await state.set_state(UploadFileState.upload_file)
 
 
+
 @menu_router.message(F.text == "👥 Группы")
 async def upload_file(message: types.Message):
     user = await ur.get_user(message.from_user.id)
@@ -150,3 +156,5 @@ async def upload_file(message: types.Message):
         return await message.answer("В базе данных не нашлось ни одной группы.")
 
     return await message.answer(groups_message, parse_mode='HTML', reply_markup=ikb_groups_configure())
+
+

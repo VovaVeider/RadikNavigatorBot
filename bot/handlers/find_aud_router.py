@@ -5,9 +5,11 @@ from aiogram.types import InputFile, FSInputFile
 
 from bot.keyboards import kb_start_main_menu
 from bot.utils.states.find_aud_state import FindAudState
-from ..bin.auditories import rooms
+from ..bin.auditories_config import auditoriums_to_zones
 from ..repository import user_repo as ur
 from ..utils.others.auditories_util import find_route
+from ..utils.others.exists_auditory import exists_auditory
+from ..utils.others.get_all_auditories import get_all_auditories
 
 find_aud_router = Router()
 
@@ -18,7 +20,7 @@ async def current_aud_handler(message: types.Message, state: FSMContext):
     user = await ur.get_user(message.from_user.id)
     user_text = message.text.strip()
 
-    if user_text not in rooms:
+    if not exists_auditory(user_text, auditoriums_to_zones):
         await message.answer("😢 Такой аудитории не существует.", reply_markup=kb_start_main_menu(user))
         await state.clear()
         return
@@ -38,9 +40,9 @@ async def current_aud_handler(message: types.Message, state: FSMContext):
     # Ответ пользователю
     if route:
         if find_aud == "209":
-            await message.answer_photo(FSInputFile("bot/bin/images/2_209.png"), caption="\n".join(route), reply_markup=kb_start_main_menu(user))
+            await message.answer_photo(FSInputFile("bot/bin/images/2_209.png"), caption=route, reply_markup=kb_start_main_menu(user))
         else:
-            await message.answer("\n".join(route), reply_markup=kb_start_main_menu(user))
+            await message.answer(route, reply_markup=kb_start_main_menu(user))
     else:
         await message.answer("Вы уже находитесь в нужной аудитории.", reply_markup=kb_start_main_menu(user))
     await state.clear()
@@ -51,7 +53,7 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
     user = await ur.get_user(message.from_user.id)
     user_text = message.text.strip()
 
-    if user_text not in rooms:
+    if not exists_auditory(user_text, auditoriums_to_zones):
         await message.answer("😢 Такой аудитории не существует.", reply_markup=kb_start_main_menu(user))
         await state.clear()
         return
@@ -69,5 +71,10 @@ async def find_aud_handler(message: types.Message, state: FSMContext):
 
 @find_aud_router.callback_query(lambda callback: callback.data.startswith("list_aud"))
 async def list_aud_callback(callback: types.CallbackQuery):
-    # todo Доделать список аудиторий
+    list_auditories = get_all_auditories(auditoriums_to_zones)
+    if list_auditories:
+        await callback.message.answer(list_auditories)
+    else:
+        await callback.message.answer("⚠️ Аудитории отсутствуют, обратитесь к администратору.")
     await callback.answer()
+

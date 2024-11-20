@@ -67,4 +67,3 @@ class TimeInterval:
         return str(self)
 
 
-print(TimeInterval.from_dirty_string('13:35 - 15.10'))
